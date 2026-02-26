@@ -1,0 +1,130 @@
+/*
+ * Lab Assignment 2: Recursion
+ * Problem 1: Fast Exponentiation
+ * Problem 2: Recursive Insertion Sort
+ * Problem 3: Tower of Hanoi
+ */
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// ============================================================
+// PROBLEM 1: Fast Exponentiation (Repeated Squaring)
+// ============================================================
+int multCount = 0;
+
+double fastPow(double x, int n) {
+    if (n == 0) return 1.0;
+    if (n == 1) return x;
+
+    if (n % 2 == 0) {
+        double half = fastPow(x, n / 2);
+        multCount++;  // one multiplication: half * half
+        return half * half;
+    } else {
+        double half = fastPow(x, (n - 1) / 2);
+        multCount += 2; // half * half, then * x
+        return half * half * x;
+    }
+}
+
+void problem1() {
+    cout << "========== Problem 1: Fast Exponentiation ==========" << endl;
+
+    struct TestCase { double x; int n; };
+    TestCase tests[] = {
+        {2.0,   8},
+        {0.2,   7},
+        {6.2,  32},
+        {2.0,  64},
+        {2.0,  63}
+    };
+
+    for (auto& t : tests) {
+        multCount = 0;
+        double result = fastPow(t.x, t.n);
+        cout << t.x << "^" << t.n << " = " << result
+             << "  |  Multiplications: " << multCount << endl;
+    }
+    cout << endl;
+}
+
+// ============================================================
+// PROBLEM 2: Recursive Insertion Sort
+// ============================================================
+void insertSorted(vector<int>& arr, int key, int pos) {
+    // Base: insert key at position pos (shift right until correct spot)
+    if (pos < 0 || arr[pos] <= key) {
+        arr[pos + 1] = key;
+        return;
+    }
+    arr[pos + 1] = arr[pos];
+    insertSorted(arr, key, pos - 1);
+}
+
+void insertionSortRec(vector<int>& arr, int n) {
+    if (n <= 1) return;
+    insertionSortRec(arr, n - 1);       // sort first n-1 elements
+    int key = arr[n - 1];               // insert arr[n-1] into sorted part
+    insertSorted(arr, key, n - 2);
+}
+
+void problem2() {
+    cout << "========== Problem 2: Recursive Insertion Sort ==========" << endl;
+
+    vector<vector<int>> tests = {
+        {1, 2, 3, 4, 5, 6, 7, 8},
+        {8, 7, 6, 5, 4, 3, 2, 1},
+        {1, 3, 5, 7, 2, 4, 6, 8},
+        {5, 6, 7, 8, 1, 2, 3, 4},
+        {7, 8, 2, 4, 1, 6, 5, 3}
+    };
+
+    for (auto& arr : tests) {
+        cout << "Input:  ";
+        for (int v : arr) cout << v << " ";
+        cout << endl;
+
+        insertionSortRec(arr, arr.size());
+
+        cout << "Output: ";
+        for (int v : arr) cout << v << " ";
+        cout << endl << endl;
+    }
+}
+
+// ============================================================
+// PROBLEM 3: Tower of Hanoi
+// ============================================================
+void hanoi(int n, char from, char to, char aux) {
+    if (n == 1) {
+        cout << "Move disk 1 from rod " << from << " to rod " << to << endl;
+        return;
+    }
+    hanoi(n - 1, from, aux, to);
+    cout << "Move disk " << n << " from rod " << from << " to rod " << to << endl;
+    hanoi(n - 1, aux, to, from);
+}
+
+void problem3() {
+    cout << "========== Problem 3: Tower of Hanoi ==========" << endl;
+
+    int disks[] = {3, 4};  // demonstrate with 3 and 4 disks
+    for (int n : disks) {
+        cout << "Enter the number of disks: " << n << endl;
+        cout << "The sequence of moves involved in the Tower of Hanoi are:" << endl;
+        hanoi(n, 'A', 'C', 'B');
+        cout << endl;
+    }
+}
+
+// ============================================================
+// MAIN
+// ============================================================
+int main() {
+    problem1();
+    problem2();
+    problem3();
+    return 0;
+}
